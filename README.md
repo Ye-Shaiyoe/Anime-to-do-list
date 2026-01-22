@@ -125,12 +125,3 @@ Made with ❤️ and ☕ by **Akrom**
 Inspired by anime aesthetics ✨
 
 ---
-
-Kalau kamu mau:
-
-* versi **lebih profesional**
-* versi **bahasa Inggris full**
-* atau README yang **cute + emoji overload**
-* atau disesuaikan sama **Express + MongoDB / MySQL**
-
-tinggal bilang ya 😆🌸
