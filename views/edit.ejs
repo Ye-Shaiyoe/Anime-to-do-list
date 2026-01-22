@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Anime - Anime List</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 30px;
+    }
+    .current-image {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .current-image img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn-save {
+      background: #667eea;
+      color: white;
+    }
+    .btn-save:hover {
+      background: #5568d3;
+    }
+    .btn-cancel {
+      background: #95a5a6;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-cancel:hover {
+      background: #7f8c8d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✏️ Edit Anime</h1>
+    
+    <% if (anime.image_path) { %>
+      <div class="current-image">
+        <img src="/uploads/<%= anime.image_path %>" alt="<%= anime.title %>">
+      </div>
+    <% } %>
+
+    <form method="POST" action="/anime/update/<%= anime.id %>" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>Judul Anime</label>
+        <input type="text" name="title" value="<%= anime.title %>" required>
+      </div>
+      <div class="form-group">
+        <label>Rating (1-10)</label>
+        <input type="number" name="rating" min="1" max="10" value="<%= anime.rating %>" required>
+      </div>
+      <div class="form-group">
+        <label>Ganti Gambar (optional)</label>
+        <input type="file" name="image" accept="image/*">
+      </div>
+      <div class="button-group">
+        <button type="submit" class="btn-save">Simpan</button>
+        <a href="/dashboard" class="btn-cancel">Batal</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
