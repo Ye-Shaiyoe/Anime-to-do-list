@@ -1,4 +1,3 @@
-# Anime-to-do-list
 ---
 
 # 🌸 Anime To-Do List (Node.js)
