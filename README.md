@@ -50,7 +50,7 @@ anime-todo-list/
 └── README.md
 ```
 
-*(Struktur bisa berbeda tergantung implementasi kamu)*
+*(Struktur bisa berubah ini tahap awal aja, dan tergantung implementasi kamu)*
 
 ---
 
