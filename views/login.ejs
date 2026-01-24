@@ -3,139 +3,337 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Anime List</title>
+  <meta name="description" content="Login ke Anime List untuk mengelola koleksi anime favorit Anda">
+  <title>Login | AnimeList Manager</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #7c3aed;
+      --error: #dc2626;
+      --success: #059669;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-light: #f9fafb;
+      --border: #e5e7eb;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
+      color: var(--text-primary);
     }
-    .container {
+
+    .login-container {
       background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      padding: 48px 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       width: 100%;
-      max-width: 400px;
+      max-width: 440px;
+      position: relative;
+      overflow: hidden;
     }
-    h1 {
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .brand-header {
       text-align: center;
-      color: #667eea;
-      margin-bottom: 30px;
+      margin-bottom: 36px;
     }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 24px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 400;
+    }
+
+    .alert {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .alert-error {
+      background-color: #fef2f2;
+      color: var(--error);
+      border-left: 4px solid var(--error);
+    }
+
+    .alert-success {
+      background-color: #f0fdf4;
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+
+    .alert i {
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
     }
+
     label {
       display: block;
-      margin-bottom: 5px;
-      color: #333;
+      margin-bottom: 8px;
       font-weight: 500;
-    }
-    input {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #5568d3;
-    }
-    .error {
-      background: #fee;
-      color: #c33;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .link {
-      text-align: center;
-      margin-top: 15px;
-    }
-    .link a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .link a:hover {
-      text-decoration: underline;
-    }
-    .divider {
-      display: flex;
-      align-items: center;
-      margin: 25px 0;
-      color: #999;
-    }
-    .divider::before,
-    .divider::after {
-      content: '';
-      flex: 1;
-      border-bottom: 1px solid #ddd;
-    }
-    .divider span {
-      padding: 0 10px;
+      color: var(--text-primary);
       font-size: 14px;
     }
-    .google-btn {
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    input {
       width: 100%;
-      padding: 12px;
-      background: white;
-      color: #333;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
+      padding: 14px 16px;
+      padding-right: 44px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      background-color: white;
+      color: var(--text-primary);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .toggle-password {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: var(--text-secondary);
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-dark), #6d28d9);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-google {
+      background: white;
+      color: #444;
+      border: 2px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .btn-google:hover {
+      background-color: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 28px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .divider span {
+      padding: 0 16px;
+      font-weight: 500;
+    }
+
+    .links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .links a {
+      color: var(--primary);
       text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
     }
-    .google-btn:hover {
-      background: #f8f8f8;
-      border-color: #ccc;
+
+    .links a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
     }
-    .google-icon {
+
+    .password-requirements {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .password-requirements i {
+      font-size: 10px;
+    }
+
+    .loading {
+      display: none;
       width: 20px;
       height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 36px 24px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .links {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-secondary);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎌 Anime List Login</h1>
+  <div class="login-container">
+    <div class="brand-header">
+      <div class="logo">
+        <i class="fas fa-film"></i>
+      </div>
+      <h1>AnimeList Manager</h1>
+      <p class="subtitle">Kelola koleksi anime favorit Anda</p>
+    </div>
+
+    <!-- Error/Success Messages -->
     <% if (error) { %>
-      <div class="error"><%= error %></div>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <div><%= error %></div>
+      </div>
     <% } %>
     
-    <!-- Google Login Button -->
-    <a href="/auth/google" class="google-btn">
-      <svg class="google-icon" viewBox="0 0 24 24">
+
+
+    <!-- Google Login -->
+    <a href="/auth/google" class="btn btn-google">
+      <svg width="20" height="20" viewBox="0 0 24 24">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -145,24 +343,119 @@
     </a>
 
     <div class="divider">
-      <span>atau</span>
+      <span>Atau lanjutkan dengan</span>
     </div>
 
-    <!-- Regular Login Form -->
-    <form method="POST" action="/login">
+    <!-- Login Form -->
+    <form method="POST" action="/login" id="loginForm">
       <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" required>
+        <label for="username">Username atau Email</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="masukkan username atau email" 
+            required
+            autocomplete="username"
+          >
+          <div class="input-icon">
+            <i class="far fa-user"></i>
+          </div>
+        </div>
       </div>
+
       <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required>
+        <div class="links" style="justify-content: flex-end; margin: 0 0 8px 0;">
+          <label for="password"> </label>
+          <a href="/forgot-password"> Lupa password?</a>
+        </div>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="masukkan password Anda" 
+            required
+            autocomplete="current-password"
+          >
+          <div class="input-icon">
+            <button type="button" class="toggle-password" id="togglePassword">
+              <i class="far fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="password-requirements">
+          <i class="fas fa-info-circle"></i>
+          Minimal 8 karakter dengan kombinasi huruf dan angka
+        </div>
       </div>
-      <button type="submit">Login</button>
+
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        <span class="btn-text">Login ke Akun</span>
+        <div class="loading" id="loadingSpinner"></div>
+      </button>
     </form>
-    <div class="link">
-      Belum punya akun? <a href="/register">Register</a>
+
+    <div class="links">
+      <div>
+        <span style="color: var(--text-secondary)">Belum punya akun?</span>
+        <a href="/register">Buat akun baru</a>
+
+    <div class="footer">
+      &copy; 2023 AnimeList Manager. Hak cipta dilindungi.
     </div>
   </div>
+
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    // Form submission with loading state
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = submitBtn.querySelector('.btn-text');
+      const spinner = document.getElementById('loadingSpinner');
+      
+      // Simple validation
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      
+      if (!username || !password) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Show loading state
+      btnText.textContent = 'Memproses...';
+      spinner.style.display = 'block';
+      submitBtn.disabled = true;
+    });
+
+    // Add focus effects
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.style.transform = 'translateY(-2px)';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentElement.style.transform = 'translateY(0)';
+      });
+    });
+  </script>
 </body>
 </html>
