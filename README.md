@@ -97,8 +97,7 @@ http://localhost:3000
 ## 📸 Preview
 
 > 🌸 *Anime-style UI preview coming soon*
-> (Tambahin screenshot di sini biar repo kamu makin keren)
-
+>
 ---
 
 ## 🎯 Learning Goals
