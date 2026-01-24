@@ -1,5 +1,5 @@
 const http = require('http');
-const fs = require('fs'); // Diperlukan jika ingin menyajikan file HTML
+const fs = require('fs'); 
 const PORT = 3000;
 
 const server = http.createServer((req, res) => {
@@ -19,3 +19,4 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`Server berjalan di http://localhost:${PORT}`);
 });
+
