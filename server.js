@@ -69,6 +69,7 @@ const upload = multer({
   }
 });
 
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -405,3 +406,4 @@ app.get('/auth/github', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
