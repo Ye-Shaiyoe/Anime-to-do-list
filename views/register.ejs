@@ -3,108 +3,1189 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - Anime List</title>
+  <meta name="description" content="Daftar akun AnimeList untuk mulai mengelola koleksi anime favorit Anda">
+  <title>Daftar Akun | AnimeList</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --secondary: #7c3aed;
+      --error: #dc2626;
+      --success: #059669;
+      --warning: #d97706;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-light: #f9fafb;
+      --border: #e5e7eb;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      padding: 20px;
+      color: var(--text-primary);
+      line-height: 1.6;
     }
-    .container {
+
+    .register-container {
       background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      padding: 48px 40px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
       width: 100%;
-      max-width: 400px;
+      max-width: 500px;
+      position: relative;
+      overflow: hidden;
     }
-    h1 {
+
+    .register-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .brand-header {
       text-align: center;
-      color: #667eea;
-      margin-bottom: 30px;
+      margin-bottom: 32px;
     }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.025em;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 400;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .alert-error {
+      background-color: #fef2f2;
+      color: var(--error);
+      border-left: 4px solid var(--error);
+    }
+
+    .alert-success {
+      background-color: #f0fdf4;
+      color: var(--success);
+      border-left: 4px solid var(--success);
+    }
+
+    .alert-info {
+      background-color: #eff6ff;
+      color: var(--primary);
+      border-left: 4px solid var(--primary);
+    }
+
+    .alert i {
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+
+    /* Progress Steps */
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 12px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--border);
+      z-index: 1;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+
+    .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .step.active .step-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .step-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .step.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Form Styles */
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
     }
+
     label {
       display: block;
-      margin-bottom: 5px;
-      color: #333;
+      margin-bottom: 8px;
       font-weight: 500;
+      color: var(--text-primary);
+      font-size: 14px;
     }
+
+    .required::after {
+      content: ' *';
+      color: var(--error);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
     input {
       width: 100%;
-      padding: 12px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-      transition: border-color 0.3s;
+      padding: 14px 16px;
+      padding-right: 44px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      background-color: white;
+      color: var(--text-primary);
     }
+
     input:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
+
+    input.valid {
+      border-color: var(--success);
+    }
+
+    input.invalid {
+      border-color: var(--error);
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .input-icon.valid {
+      color: var(--success);
+    }
+
+    .input-icon.invalid {
+      color: var(--error);
+    }
+
+    .toggle-password {
+      background: none;
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 18px;
+      color: var(--text-secondary);
+      padding: 4px;
       cursor: pointer;
-      transition: background 0.3s;
+      position: absolute;
+      right: 46px;
+      top: 50%;
+      transform: translateY(-50%);
     }
-    button:hover {
-      background: #5568d3;
+
+    /* Password Strength Meter */
+    .password-strength {
+      margin-top: 12px;
     }
-    .error {
-      background: #fee;
-      color: #c33;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      text-align: center;
+
+    .strength-meter {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 6px;
+      overflow: hidden;
     }
-    .link {
-      text-align: center;
-      margin-top: 15px;
+
+    .strength-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 2px;
+      transition: all 0.3s ease;
     }
-    .link a {
-      color: #667eea;
+
+    .strength-weak .strength-bar {
+      width: 25%;
+      background: var(--error);
+    }
+
+    .strength-medium .strength-bar {
+      width: 50%;
+      background: var(--warning);
+    }
+
+    .strength-strong .strength-bar {
+      width: 75%;
+      background: #eab308;
+    }
+
+    .strength-very-strong .strength-bar {
+      width: 100%;
+      background: var(--success);
+    }
+
+    .strength-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Terms and Conditions */
+    .terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 24px 0;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .terms input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      cursor: pointer;
+    }
+
+    .terms label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .terms a {
+      color: var(--primary);
       text-decoration: none;
       font-weight: 500;
     }
-    .link a:hover {
+
+    .terms a:hover {
       text-decoration: underline;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-dark), #6d28d9);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-google {
+      background: white;
+      color: #444;
+      border: 2px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .btn-google:hover {
+      background-color: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    /* Loading State */
+    .loading {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    /* Form Validation Messages */
+    .validation-message {
+      font-size: 12px;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .validation-message.valid {
+      color: var(--success);
+    }
+
+    .validation-message.invalid {
+      color: var(--error);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 28px 0;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .divider span {
+      padding: 0 16px;
+      font-weight: 500;
+    }
+
+    /* Links */
+    .links {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 15px;
+    }
+
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .links a:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .links p {
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* Benefits List */
+    .benefits {
+      background: var(--bg-light);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .benefits h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .benefits ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .benefits li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .benefits li i {
+      color: var(--success);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+
+    /* Animations */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+      .register-container {
+        padding: 36px 24px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .progress-steps {
+        margin-bottom: 24px;
+      }
+      
+      .step-label {
+        font-size: 11px;
+      }
+      
+      .benefits {
+        padding: 16px;
+      }
+    }
+
+    /* Password Requirements */
+    .password-hints {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .hint {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+    }
+
+    .hint i {
+      font-size: 10px;
+    }
+
+    .hint.valid {
+      color: var(--success);
+    }
+
+    .hint.invalid {
+      color: var(--error);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎌 Register Anime List</h1>
+  <div class="register-container">
+    <!-- Header -->
+    <div class="brand-header">
+      <div class="logo">
+        <i class="fas fa-film"></i>
+      </div>
+      <h1>Bergabung dengan AnimeList</h1>
+      <p class="subtitle">Mulai kelola koleksi anime favorit Anda dengan fitur-fitur eksklusif</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="step active" data-step="1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Informasi Akun</div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Verifikasi</div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Selesai</div>
+      </div>
+    </div>
+
+    <!-- Error/Success Messages -->
     <% if (error) { %>
-      <div class="error"><%= error %></div>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <div><%= error %></div>
+      </div>
     <% } %>
-    <form method="POST" action="/register">
+
+
+    <!-- Registration Form -->
+    <form method="POST" action="/register" id="registerForm">
+      <!-- Username Field -->
       <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" required>
+        <label for="username" class="required">Username</label>
+        <div class="input-wrapper">
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="pilih username unik"
+            required
+            minlength="3"
+            maxlength="20"
+            pattern="[a-zA-Z0-9_]+"
+            title="Hanya huruf, angka, dan underscore (_) diperbolehkan"
+          >
+          <div class="input-icon" id="username-icon">
+            <i class="far fa-user"></i>
+          </div>
+        </div>
+        <div class="validation-message" id="username-message"></div>
       </div>
+
+      <!-- Email Field -->
       <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" required minlength="6">
+        <label for="email" class="required">Email</label>
+        <div class="input-wrapper">
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="email@anda.com"
+            required
+          >
+          <div class="input-icon" id="email-icon">
+            <i class="far fa-envelope"></i>
+          </div>
+        </div>
+        <div class="validation-message" id="email-message"></div>
       </div>
-      <button type="submit">Register</button>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password" class="required">Password</label>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="buat password yang kuat"
+            required
+            minlength="8"
+          >
+          <button type="button" class="toggle-password" id="togglePassword">
+            <i class="far fa-eye"></i>
+          </button>
+          <div class="input-icon" id="password-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+        </div>
+        
+        <!-- Password Strength Meter -->
+        <div class="password-strength" id="password-strength">
+          <div class="strength-meter">
+            <div class="strength-bar"></div>
+          </div>
+          <div class="strength-label">
+            <span>Kekuatan password:</span>
+            <span id="strength-text">Lemah</span>
+          </div>
+        </div>
+
+        <!-- Password Hints -->
+        <div class="password-hints">
+          <div class="hint" id="hint-length">
+            <i class="fas fa-circle"></i>
+            <span>Minimal 8 karakter</span>
+          </div>
+          <div class="hint" id="hint-uppercase">
+            <i class="fas fa-circle"></i>
+            <span>Huruf besar</span>
+          </div>
+          <div class="hint" id="hint-lowercase">
+            <i class="fas fa-circle"></i>
+            <span>Huruf kecil</span>
+          </div>
+          <div class="hint" id="hint-number">
+            <i class="fas fa-circle"></i>
+            <span>Angka</span>
+          </div>
+          <div class="hint" id="hint-special">
+            <i class="fas fa-circle"></i>
+            <span>Karakter spesial</span>
+          </div>
+          <div class="hint" id="hint-match">
+            <i class="fas fa-circle"></i>
+            <span>Sesuai dengan konfirmasi</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword" class="required">Konfirmasi Password</label>
+        <div class="input-wrapper">
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            name="confirmPassword" 
+            placeholder="ketik ulang password"
+            required
+          >
+          <button type="button" class="toggle-password" id="toggleConfirmPassword">
+            <i class="far fa-eye"></i>
+          </button>
+          <div class="input-icon" id="confirm-password-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+        </div>
+        <div class="validation-message" id="confirm-password-message"></div>
+      </div>
+
+      <!-- Terms and Conditions -->
+      <div class="terms">
+        <input type="checkbox" id="terms" name="terms" required>
+        <label for="terms">
+          Saya setuju dengan 
+          <a href="/terms" target="_blank">Syarat dan Ketentuan</a> 
+          serta 
+          <a href="/privacy" target="_blank">Kebijakan Privasi</a> 
+          AnimeList. Saya memahami bahwa data saya akan diproses sesuai dengan kebijakan yang berlaku.
+        </label>
+      </div>
+
+      <!-- Newsletter Opt-in -->
+      <div class="terms">
+        <input type="checkbox" id="newsletter" name="newsletter">
+        <label for="newsletter">
+          Ya, saya ingin menerima update tentang anime baru, rekomendasi khusus, dan penawaran eksklusif melalui email.
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+        <span class="btn-text">Buat Akun Gratis</span>
+        <div class="loading" id="loadingSpinner"></div>
+      </button>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>Atau daftar dengan</span>
+      </div>
+
+      <!-- Social Registration Options -->
+      <a href="/auth/google" class="btn btn-google">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Google
+      </a>
+
+      <a href="/auth/github" class="btn btn-google" style="margin-bottom: 0;">
+        <i class="fab fa-github"></i>
+        GitHub
+      </a>
     </form>
-    <div class="link">
-      Sudah punya akun? <a href="/login">Login</a>
+
+    <!-- Benefits Section -->
+    <div class="benefits">
+      <h3><i class="fas fa-gift"></i> Keuntungan Bergabung</h3>
+      <ul>
+        <li><i class="fas fa-check"></i> Simpan dan kelola daftar anime favorit</li>
+        <li><i class="fas fa-check"></i> Beri rating dan ulasan untuk setiap anime</li>
+        <li><i class="fas fa-check"></i> Dapatkan rekomendasi personalisasi</li>
+        <li><i class="fas fa-check"></i> Lacak progress menonton anime</li>
+        <li><i class="fas fa-check"></i> Fitur ekspor daftar ke berbagai format</li>
+        <li><i class="fas fa-check"></i> Komunitas diskusi dengan penggemar lain</li>
+      </ul>
+    </div>
+
+    <!-- Login Link -->
+    <div class="links">
+      <p>Sudah punya akun?</p>
+      <a href="/login">Masuk ke akun Anda</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      &copy; 2023 AnimeList Manager. Hak cipta dilindungi.<br>
+      Dengan mendaftar, Anda menyetujui kebijakan kami.
     </div>
   </div>
+
+  <script>
+    // DOM Elements
+    const form = document.getElementById('registerForm');
+    const usernameInput = document.getElementById('username');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPassword');
+    const submitBtn = document.getElementById('submitBtn');
+    const termsCheckbox = document.getElementById('terms');
+    const strengthText = document.getElementById('strength-text');
+    const strengthBar = document.querySelector('.strength-bar');
+    const passwordStrength = document.getElementById('password-strength');
+
+    // Password hints
+    const hints = {
+      length: document.getElementById('hint-length'),
+      uppercase: document.getElementById('hint-uppercase'),
+      lowercase: document.getElementById('hint-lowercase'),
+      number: document.getElementById('hint-number'),
+      special: document.getElementById('hint-special'),
+      match: document.getElementById('hint-match')
+    };
+
+    // Validation states
+    const validation = {
+      username: false,
+      email: false,
+      password: false,
+      confirmPassword: false,
+      terms: false
+    };
+
+    // Toggle password visibility
+    function togglePasswordVisibility(input, button) {
+      const icon = button.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    }
+
+    togglePasswordBtn.addEventListener('click', () => {
+      togglePasswordVisibility(passwordInput, togglePasswordBtn);
+    });
+
+    toggleConfirmPasswordBtn.addEventListener('click', () => {
+      togglePasswordVisibility(confirmPasswordInput, toggleConfirmPasswordBtn);
+    });
+
+    // Username validation
+    function validateUsername() {
+      const value = usernameInput.value.trim();
+      const message = document.getElementById('username-message');
+      const icon = document.getElementById('username-icon');
+      
+      if (value.length < 3) {
+        showError(usernameInput, message, icon, 'Username minimal 3 karakter');
+        validation.username = false;
+        return false;
+      }
+      
+      if (value.length > 20) {
+        showError(usernameInput, message, icon, 'Username maksimal 20 karakter');
+        validation.username = false;
+        return false;
+      }
+      
+      if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+        showError(usernameInput, message, icon, 'Hanya huruf, angka, dan underscore (_)');
+        validation.username = false;
+        return false;
+      }
+      
+      showSuccess(usernameInput, message, icon, 'Username tersedia');
+      validation.username = true;
+      return true;
+    }
+
+    // Email validation
+    function validateEmail() {
+      const value = emailInput.value.trim();
+      const message = document.getElementById('email-message');
+      const icon = document.getElementById('email-icon');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!emailRegex.test(value)) {
+        showError(emailInput, message, icon, 'Format email tidak valid');
+        validation.email = false;
+        return false;
+      }
+      
+      showSuccess(emailInput, message, icon, 'Format email valid');
+      validation.email = true;
+      return true;
+    }
+
+    // Password validation
+    function validatePassword() {
+      const value = passwordInput.value;
+      const message = document.getElementById('password-message');
+      const icon = document.getElementById('password-icon');
+      
+      // Reset hints
+      Object.values(hints).forEach(hint => {
+        hint.classList.remove('valid', 'invalid');
+        hint.querySelector('i').className = 'fas fa-circle';
+      });
+      
+      // Check password strength
+      let strength = 0;
+      
+      // Length check
+      if (value.length >= 8) {
+        hints.length.classList.add('valid');
+        hints.length.querySelector('i').className = 'fas fa-check';
+        strength++;
+      } else {
+        hints.length.classList.add('invalid');
+        hints.length.querySelector('i').className = 'fas fa-times';
+      }
+      
+      // Uppercase check
+      if (/[A-Z]/.test(value)) {
+        hints.uppercase.classList.add('valid');
+        hints.uppercase.querySelector('i').className = 'fas fa-check';
+        strength++;
+      } else {
+        hints.uppercase.classList.add('invalid');
+        hints.uppercase.querySelector('i').className = 'fas fa-times';
+      }
+      
+      // Lowercase check
+      if (/[a-z]/.test(value)) {
+        hints.lowercase.classList.add('valid');
+        hints.lowercase.querySelector('i').className = 'fas fa-check';
+        strength++;
+      } else {
+        hints.lowercase.classList.add('invalid');
+        hints.lowercase.querySelector('i').className = 'fas fa-times';
+      }
+      
+      // Number check
+      if (/\d/.test(value)) {
+        hints.number.classList.add('valid');
+        hints.number.querySelector('i').className = 'fas fa-check';
+        strength++;
+      } else {
+        hints.number.classList.add('invalid');
+        hints.number.querySelector('i').className = 'fas fa-times';
+      }
+      
+      // Special character check
+      if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)) {
+        hints.special.classList.add('valid');
+        hints.special.querySelector('i').className = 'fas fa-check';
+        strength++;
+      } else {
+        hints.special.classList.add('invalid');
+        hints.special.querySelector('i').className = 'fas fa-times';
+      }
+      
+      // Update strength meter
+      updateStrengthMeter(strength);
+      
+      if (value.length >= 8 && strength >= 3) {
+        showSuccess(passwordInput, null, icon, '');
+        validation.password = true;
+        return true;
+      } else {
+        showError(passwordInput, null, icon, '');
+        validation.password = false;
+        return false;
+      }
+    }
+
+    // Update password strength meter
+    function updateStrengthMeter(strength) {
+      // Reset classes
+      passwordStrength.classList.remove(
+        'strength-weak',
+        'strength-medium', 
+        'strength-strong',
+        'strength-very-strong'
+      );
+      
+      if (strength <= 2) {
+        passwordStrength.classList.add('strength-weak');
+        strengthText.textContent = 'Lemah';
+      } else if (strength === 3) {
+        passwordStrength.classList.add('strength-medium');
+        strengthText.textContent = 'Sedang';
+      } else if (strength === 4) {
+        passwordStrength.classList.add('strength-strong');
+        strengthText.textContent = 'Kuat';
+      } else {
+        passwordStrength.classList.add('strength-very-strong');
+        strengthText.textContent = 'Sangat Kuat';
+      }
+    }
+
+    // Confirm password validation
+    function validateConfirmPassword() {
+      const value = confirmPasswordInput.value;
+      const passwordValue = passwordInput.value;
+      const message = document.getElementById('confirm-password-message');
+      const icon = document.getElementById('confirm-password-icon');
+      
+      if (value !== passwordValue) {
+        showError(confirmPasswordInput, message, icon, 'Password tidak cocok');
+        validation.confirmPassword = false;
+        hints.match.classList.add('invalid');
+        hints.match.querySelector('i').className = 'fas fa-times';
+        return false;
+      }
+      
+      if (value.length === 0) {
+        showError(confirmPasswordInput, message, icon, 'Konfirmasi password diperlukan');
+        validation.confirmPassword = false;
+        hints.match.classList.remove('valid', 'invalid');
+        hints.match.querySelector('i').className = 'fas fa-circle';
+        return false;
+      }
+      
+      showSuccess(confirmPasswordInput, message, icon, 'Password cocok');
+      validation.confirmPassword = true;
+      hints.match.classList.add('valid');
+      hints.match.querySelector('i').className = 'fas fa-check';
+      return true;
+    }
+
+    // Terms validation
+    function validateTerms() {
+      validation.terms = termsCheckbox.checked;
+      updateSubmitButton();
+    }
+
+    // Show error state
+    function showError(input, messageElement, iconElement, message) {
+      input.classList.remove('valid');
+      input.classList.add('invalid');
+      
+      if (iconElement) {
+        iconElement.classList.remove('valid');
+        iconElement.classList.add('invalid');
+        iconElement.innerHTML = '<i class="fas fa-times"></i>';
+      }
+      
+      if (messageElement) {
+        messageElement.textContent = message;
+        messageElement.classList.remove('valid');
+        messageElement.classList.add('invalid');
+      }
+    }
+
+    // Show success state
+    function showSuccess(input, messageElement, iconElement, message) {
+      input.classList.remove('invalid');
+      input.classList.add('valid');
+      
+      if (iconElement) {
+        iconElement.classList.remove('invalid');
+        iconElement.classList.add('valid');
+        iconElement.innerHTML = '<i class="fas fa-check"></i>';
+      }
+      
+      if (messageElement) {
+        messageElement.textContent = message;
+        messageElement.classList.remove('invalid');
+        messageElement.classList.add('valid');
+      }
+    }
+
+    // Update submit button state
+    function updateSubmitButton() {
+      const allValid = Object.values(validation).every(v => v === true);
+      submitBtn.disabled = !allValid;
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Validate all fields
+      const usernameValid = validateUsername();
+      const emailValid = validateEmail();
+      const passwordValid = validatePassword();
+      const confirmPasswordValid = validateConfirmPassword();
+      const termsValid = validation.terms;
+      
+      if (!usernameValid || !emailValid || !passwordValid || !confirmPasswordValid || !termsValid) {
+        // Shake form for attention
+        form.classList.add('shake');
+        setTimeout(() => form.classList.remove('shake'), 500);
+        return;
+      }
+      
+      // Show loading state
+      const btnText = submitBtn.querySelector('.btn-text');
+      const spinner = document.getElementById('loadingSpinner');
+      btnText.textContent = 'Membuat akun...';
+      spinner.style.display = 'block';
+      submitBtn.disabled = true;
+      
+      // Submit form
+      setTimeout(() => {
+        form.submit();
+      }, 1500);
+    });
+
+    // Event listeners
+    usernameInput.addEventListener('input', validateUsername);
+    usernameInput.addEventListener('blur', validateUsername);
+    
+    emailInput.addEventListener('input', validateEmail);
+    emailInput.addEventListener('blur', validateEmail);
+    
+    passwordInput.addEventListener('input', () => {
+      validatePassword();
+      validateConfirmPassword();
+    });
+    
+    confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+    termsCheckbox.addEventListener('change', validateTerms);
+
+    // Real-time validation on page load
+    validateUsername();
+    validateEmail();
+    validatePassword();
+    validateConfirmPassword();
+    validateTerms();
+
+    // Auto-advance steps animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const steps = document.querySelectorAll('.step');
+      let currentStep = 0;
+      
+      function advanceStep() {
+        if (currentStep < steps.length) {
+          steps[currentStep].classList.remove('active');
+          currentStep++;
+          if (currentStep < steps.length) {
+            steps[currentStep].classList.add('active');
+          }
+        }
+      }
+      
+      // Auto advance every 3 seconds for demo
+      setInterval(advanceStep, 3000);
+    });
+  </script>
 </body>
 </html>
