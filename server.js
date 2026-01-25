@@ -25,7 +25,9 @@ db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
+    newsletter INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
@@ -90,6 +92,48 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
+// ============= VALIDATION HELPERS =============
+
+// Validate username
+const validateUsername = (username) => {
+  if (!username || username.length < 3) {
+    return { valid: false, message: 'Username minimal 3 karakter' };
+  }
+  if (username.length > 20) {
+    return { valid: false, message: 'Username maksimal 20 karakter' };
+  }
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return { valid: false, message: 'Username hanya boleh berisi huruf, angka, dan underscore' };
+  }
+  return { valid: true };
+};
+
+// Validate email
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    return { valid: false, message: 'Format email tidak valid' };
+  }
+  return { valid: true };
+};
+
+// Validate password
+const validatePassword = (password) => {
+  if (!password || password.length < 8) {
+    return { valid: false, message: 'Password minimal 8 karakter' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, message: 'Password harus mengandung huruf besar' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, message: 'Password harus mengandung huruf kecil' };
+  }
+  if (!/\d/.test(password)) {
+    return { valid: false, message: 'Password harus mengandung angka' };
+  }
+  return { valid: true };
+};
+
 // ============= ROUTES =============
 
 // Home
@@ -107,49 +151,113 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, email, password, confirmPassword, terms, newsletter } = req.body;
 
-  if (!username || !password) {
-    return res.render('register', { error: 'Username dan password harus diisi!' });
+  // Validate all fields
+  if (!username || !email || !password || !confirmPassword) {
+    return res.render('register', { error: 'Semua field harus diisi!' });
+  }
+
+  // Validate terms
+  if (!terms) {
+    return res.render('register', { error: 'Anda harus menyetujui Syarat dan Ketentuan!' });
+  }
+
+  // Validate username
+  const usernameValidation = validateUsername(username);
+  if (!usernameValidation.valid) {
+    return res.render('register', { error: usernameValidation.message });
+  }
+
+  // Validate email
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.valid) {
+    return res.render('register', { error: emailValidation.message });
+  }
+
+  // Validate password
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.valid) {
+    return res.render('register', { error: passwordValidation.message });
+  }
+
+  // Check password match
+  if (password !== confirmPassword) {
+    return res.render('register', { error: 'Password dan konfirmasi password tidak cocok!' });
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    
-    db.run('INSERT INTO users (username, password) VALUES (?, ?)', 
-      [username, hashedPassword], 
-      (err) => {
-        if (err) {
-          return res.render('register', { error: 'Username sudah dipakai!' });
-        }
-        res.redirect('/login');
+    // Check if username already exists
+    db.get('SELECT * FROM users WHERE username = ?', [username], async (err, existingUser) => {
+      if (existingUser) {
+        return res.render('register', { error: 'Username sudah digunakan!' });
       }
-    );
+
+      // Check if email already exists
+      db.get('SELECT * FROM users WHERE email = ?', [email], async (err, existingEmail) => {
+        if (existingEmail) {
+          return res.render('register', { error: 'Email sudah terdaftar!' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newsletterValue = newsletter ? 1 : 0;
+
+        // Insert new user
+        db.run('INSERT INTO users (username, email, password, newsletter) VALUES (?, ?, ?, ?)', 
+          [username, email, hashedPassword, newsletterValue], 
+          (err) => {
+            if (err) {
+              console.error(err);
+              return res.render('register', { error: 'Terjadi kesalahan saat mendaftar!' });
+            }
+            
+            // Redirect to login with success message
+            res.redirect('/login?success=Registrasi berhasil! Silakan login.');
+          }
+        );
+      });
+    });
   } catch (error) {
-    res.render('register', { error: 'Terjadi kesalahan!' });
+    console.error(error);
+    res.render('register', { error: 'Terjadi kesalahan server!' });
   }
 });
 
 // Login page
 app.get('/login', (req, res) => {
-  res.render('login', { error: null });
+  const success = req.query.success || null;
+  res.render('login', { error: null, success });
 });
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
-  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
-    if (err || !user) {
-      return res.render('login', { error: 'Username atau password salah!' });
+  if (!username || !password) {
+    return res.render('login', { error: 'Username dan password harus diisi!', success: null });
+  }
+
+  // Allow login with username or email
+  const query = 'SELECT * FROM users WHERE username = ? OR email = ?';
+  
+  db.get(query, [username, username], async (err, user) => {
+    if (err) {
+      console.error(err);
+      return res.render('login', { error: 'Terjadi kesalahan!', success: null });
+    }
+
+    if (!user) {
+      return res.render('login', { error: 'Username/email atau password salah!', success: null });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res.render('login', { error: 'Username atau password salah!' });
+      return res.render('login', { error: 'Username/email atau password salah!', success: null });
     }
 
     req.session.userId = user.id;
     req.session.username = user.username;
+    req.session.email = user.email;
     res.redirect('/dashboard');
   });
 });
@@ -166,6 +274,7 @@ app.get('/dashboard', isAuthenticated, (req, res) => {
     [req.session.userId], 
     (err, anime) => {
       if (err) {
+        console.error(err);
         return res.status(500).send('Database error');
       }
       res.render('dashboard', { 
@@ -270,6 +379,26 @@ app.post('/anime/delete/:id', isAuthenticated, (req, res) => {
       });
     }
   );
+});
+
+// Terms page (placeholder)
+app.get('/terms', (req, res) => {
+  res.send('<h1>Syarat dan Ketentuan</h1><p>Halaman Syarat dan Ketentuan</p>');
+});
+
+// Privacy page (placeholder)
+app.get('/privacy', (req, res) => {
+  res.send('<h1>Kebijakan Privasi</h1><p>Halaman Kebijakan Privasi</p>');
+});
+
+// Google auth placeholder
+app.get('/auth/google', (req, res) => {
+  res.send('Google OAuth belum diimplementasikan');
+});
+
+// GitHub auth placeholder
+app.get('/auth/github', (req, res) => {
+  res.send('GitHub OAuth belum diimplementasikan');
 });
 
 // Start server
