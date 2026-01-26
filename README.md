@@ -55,7 +55,11 @@ anime-todo-list/
 ---
 
 ## 🚀 Installation & Setup
-
+0. Instal node.js di 
+   ```link
+   https://nodejs.org/en/download
+   ```
+   
 1. Clone repository:
 
 ```bash
