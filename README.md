@@ -106,7 +106,8 @@ http://localhost:3000
 
 ## 📸 Preview
 
-> 🌸 *Anime-style UI preview coming soon*
+> <img width="1228" height="1111" alt="image" src="https://github.com/user-attachments/assets/6f1f297c-0bee-4b4a-9792-c97f83109e2a" />
+
 >
 ---
 
