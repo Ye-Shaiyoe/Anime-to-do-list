@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Anime List</title>
+    <link rel="icon" href="../gmbr/logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -377,8 +378,8 @@
 
         .anime-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 22px;
         }
 
         .anime-card {
@@ -399,7 +400,7 @@
         }
 
         .anime-image-container {
-            height: 320px;
+            height: 260px;
             overflow: hidden;
             position: relative;
         }
@@ -417,14 +418,14 @@
 
         .anime-rating-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             background: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 5px;
@@ -432,17 +433,17 @@
         }
 
         .anime-info {
-            padding: 20px;
+            padding: 16px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
 
         .anime-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--dark);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -452,36 +453,41 @@
 
         .anime-meta {
             color: var(--gray);
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 13px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
+        .anime-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 6px;
+        }
+
         .anime-genre {
             background: #f3f4f6;
             color: var(--primary);
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            margin-top: 5px;
-            align-self: flex-start;
         }
 
         .anime-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
+            margin-top: 14px;
         }
 
         .btn-edit, .btn-delete {
             flex: 1;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -599,7 +605,7 @@
             }
 
             .anime-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
 
             .stats-container {
@@ -807,8 +813,12 @@
                             <% } %>
                             
                             <% if (anime.genre) { %>
-                                <div class="anime-genre">
-                                    <%= anime.genre.split(',')[0].trim() %>
+                                <div class="anime-genres">
+                                    <% anime.genre.split(',').forEach(function(g) { 
+                                        const genre = g.trim();
+                                        if (genre) { %>
+                                        <span class="anime-genre"><%= genre %></span>
+                                    <% } }); %>
                                 </div>
                             <% } %>
                             
@@ -831,7 +841,7 @@
 
     <!-- Footer -->
     <div class="footer animate-in" style="animation-delay: 0.8s">
-        <p>© 2023 My Anime Dashboard. Dibuat dengan <i class="fas fa-heart" style="color: #ef4444;"></i> untuk penggemar anime.</p>
+        <p>© 2026 My Anime Dashboard. Dibuat dengan <i class="fas fa-heart" style="color: #ef4444;"></i> untuk penggemar anime.</p>
         <p>Total <%= animeList.length %> anime di database | Terakhir diperbarui: <span id="current-date"></span></p>
     </div>
 
