@@ -5,6 +5,7 @@ const sqlite3 = require('sqlite3').verbose();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = 3000;
@@ -42,6 +43,15 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS password_resets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
 });
 
 // Multer config for image upload
@@ -69,11 +79,11 @@ const upload = multer({
   }
 });
 
-
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
+app.use('/gmbr', express.static('gmbr'));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
@@ -402,8 +412,185 @@ app.get('/auth/github', (req, res) => {
   res.send('GitHub OAuth belum diimplementasikan');
 });
 
+// ============= FORGOT PASSWORD ROUTES =============
+
+// Forgot password page
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password', { error: null, success: null });
+});
+
+// Handle forgot password request
+app.post('/forgot-password', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.render('forgot-password', { 
+      error: 'Email harus diisi!', 
+      success: null 
+    });
+  }
+
+  // Check if email exists
+  db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+    if (err) {
+      console.error(err);
+      return res.render('forgot-password', { 
+        error: 'Terjadi kesalahan!', 
+        success: null 
+      });
+    }
+
+    if (!user) {
+      // Security: Don't reveal if email exists or not
+      return res.render('forgot-password', { 
+        error: null,
+        success: 'Jika email terdaftar, link reset password telah dikirim ke email Anda. Silakan periksa inbox Anda.'
+      });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hour from now
+
+    // Save token to database
+    db.run(
+      'INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)',
+      [email, resetToken, expiresAt.toISOString()],
+      (err) => {
+        if (err) {
+          console.error(err);
+          return res.render('forgot-password', { 
+            error: 'Terjadi kesalahan!', 
+            success: null 
+          });
+        }
+
+        // In production, send email here
+        // For now, we'll just log the reset link
+        const resetLink = `http://localhost:${PORT}/reset-password/${resetToken}`;
+        console.log('\n=================================');
+        console.log('PASSWORD RESET LINK:');
+        console.log(resetLink);
+        console.log('=================================\n');
+
+        res.render('forgot-password', { 
+          error: null,
+          success: 'Link reset password telah dikirim ke email Anda. Periksa console untuk melihat link (demo mode).'
+        });
+      }
+    );
+  });
+});
+
+// Reset password page
+app.get('/reset-password/:token', (req, res) => {
+  const { token } = req.params;
+
+  // Check if token is valid and not expired
+  db.get(
+    'SELECT * FROM password_resets WHERE token = ? AND used = 0 AND datetime(expires_at) > datetime("now")',
+    [token],
+    (err, resetToken) => {
+      if (err || !resetToken) {
+        return res.render('reset-password', { 
+          error: 'Link reset password tidak valid atau sudah kadaluarsa!',
+          success: null,
+          token: null
+        });
+      }
+
+      res.render('reset-password', { 
+        error: null,
+        success: null,
+        token: token
+      });
+    }
+  );
+});
+
+// Handle reset password
+app.post('/reset-password', async (req, res) => {
+  const { token, password, confirmPassword } = req.body;
+
+  if (!token || !password || !confirmPassword) {
+    return res.render('reset-password', { 
+      error: 'Semua field harus diisi!',
+      success: null,
+      token: token
+    });
+  }
+
+  if (password !== confirmPassword) {
+    return res.render('reset-password', { 
+      error: 'Password dan konfirmasi password tidak cocok!',
+      success: null,
+      token: token
+    });
+  }
+
+  // Validate password
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.valid) {
+    return res.render('reset-password', { 
+      error: passwordValidation.message,
+      success: null,
+      token: token
+    });
+  }
+
+  // Check if token is valid
+  db.get(
+    'SELECT * FROM password_resets WHERE token = ? AND used = 0 AND datetime(expires_at) > datetime("now")',
+    [token],
+    async (err, resetToken) => {
+      if (err || !resetToken) {
+        return res.render('reset-password', { 
+          error: 'Link reset password tidak valid atau sudah kadaluarsa!',
+          success: null,
+          token: null
+        });
+      }
+
+      try {
+        // Hash new password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Update user password
+        db.run(
+          'UPDATE users SET password = ? WHERE email = ?',
+          [hashedPassword, resetToken.email],
+          (err) => {
+            if (err) {
+              console.error(err);
+              return res.render('reset-password', { 
+                error: 'Terjadi kesalahan saat mereset password!',
+                success: null,
+                token: token
+              });
+            }
+
+            // Mark token as used
+            db.run('UPDATE password_resets SET used = 1 WHERE token = ?', [token], (err) => {
+              if (err) console.error(err);
+            });
+
+            // Redirect to login with success message
+            res.redirect('/login?success=Password berhasil direset! Silakan login dengan password baru.');
+          }
+        );
+      } catch (error) {
+        console.error(error);
+        res.render('reset-password', { 
+          error: 'Terjadi kesalahan server!',
+          success: null,
+          token: token
+        });
+      }
+    }
+  );
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
