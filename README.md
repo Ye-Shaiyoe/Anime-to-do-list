@@ -55,7 +55,7 @@ anime-todo-list/
 ---
 
 ## 🚀 Installation & Setup
-0. Instal node.js di 
+0. Instal node.js dulu jika belum ada
 ```link
 https://nodejs.org/en/download
 
